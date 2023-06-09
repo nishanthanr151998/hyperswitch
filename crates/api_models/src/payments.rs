@@ -1,4 +1,4 @@
-use std::{collections::HashMap, num::NonZeroI64};
+use std::num::NonZeroI64;
 
 use cards::CardNumber;
 use common_utils::{pii, pii::Email};
@@ -182,6 +182,10 @@ pub struct PaymentsRequest {
 
     /// You can specify up to 50 keys, with key names up to 40 characters long and values up to 500 characters long. Metadata is useful for storing additional, structured information on an object.
     pub metadata: Option<Metadata>,
+
+    /// Any other udf that is to be provided
+    #[schema(value_type = Object, example = r#"{ "city": "NY", "unit": "245" }"#)]
+    pub udf: Option<pii::SecretSerdeValue>,
 
     /// Information about the product , quantity and amount for connectors. (e.g. Klarna)
     #[schema(value_type = Option<Vec<OrderDetailsWithAmount>>, example = "order_details as vector of objects")]
@@ -1588,12 +1592,8 @@ pub struct OrderDetails {
 pub struct Metadata {
     /// Information about the product and quantity for specific connectors. (e.g. Klarna)
     pub order_details: Option<OrderDetails>,
-    /// Information used for routing
-    pub routing_parameters: Option<HashMap<String, String>>,
-    /// Any other metadata that is to be provided
-    #[schema(value_type = Object, example = r#"{ "city": "NY", "unit": "245" }"#)]
-    #[serde(flatten)]
-    pub data: pii::SecretSerdeValue,
+
+    
 
     /// Payload coming in request as a metadata field
     #[schema(value_type = Option<Object>)]
