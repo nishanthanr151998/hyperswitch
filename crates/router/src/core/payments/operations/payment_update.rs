@@ -514,8 +514,10 @@ impl<F: Send + Clone> ValidateRequest<F, api::PaymentsRequest> for PaymentUpdate
         BoxedOperation<'b, F, api::PaymentsRequest>,
         operations::ValidateResult<'a>,
     )> {
-        let order_details_inside_metadata =
-            request.clone().metadata.and_then(|meta| meta.order_details);
+        let order_details_inside_metadata = request
+            .clone()
+            .metadata_internal
+            .and_then(|meta| meta.order_details);
         if request
             .order_details
             .clone()

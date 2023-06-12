@@ -411,8 +411,10 @@ impl<F: Send + Clone> ValidateRequest<F, api::PaymentsRequest> for PaymentCreate
         BoxedOperation<'b, F, api::PaymentsRequest>,
         operations::ValidateResult<'a>,
     )> {
-        let order_details_inside_metadata =
-            request.clone().metadata.and_then(|meta| meta.order_details);
+        let order_details_inside_metadata = request
+            .clone()
+            .metadata_internal
+            .and_then(|meta| meta.order_details);
         if request
             .order_details
             .clone()
@@ -548,7 +550,7 @@ impl PaymentCreate {
             crate::utils::generate_id(consts::ID_LENGTH, format!("{payment_id}_secret").as_str());
         let (amount, currency) = (money.0, Some(money.1));
         let metadata = request
-            .metadata
+            .metadata_internal
             .as_ref()
             .map(|metadata| {
                 let transformed_metadata = api_models::payments::Metadata {
@@ -560,8 +562,10 @@ impl PaymentCreate {
             .transpose()
             .change_context(errors::ApiErrorResponse::InternalServerError)
             .attach_printable("Encoding Metadata to value failed")?;
-        let order_details_metadata_req =
-            request.clone().metadata.and_then(|meta| meta.order_details);
+        let order_details_metadata_req = request
+            .clone()
+            .metadata_internal
+            .and_then(|meta| meta.order_details);
         if request
             .clone()
             .order_details

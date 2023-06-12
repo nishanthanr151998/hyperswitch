@@ -2171,7 +2171,10 @@ pub fn validate_and_add_order_details_to_payment_intent(
         .and_then(|meta| meta.order_details);
     let order_details_outside_metadata_db = payment_intent.clone().order_details;
     let order_details_outside_metadata_req = request.clone().order_details;
-    let order_details_metadata_req = request.clone().metadata.and_then(|meta| meta.order_details);
+    let order_details_metadata_req = request
+        .clone()
+        .metadata_internal
+        .and_then(|meta| meta.order_details);
 
     if order_details_metadata_db
         .clone()
@@ -2218,7 +2221,10 @@ pub fn add_order_details_and_metadata_to_payment_intent(
                     order_details: meta.order_details,
                     ..meta_db
                 },
-                None => meta,
+                None => api_models::payments::Metadata {
+                    order_details: meta.order_details,
+                    ..Default::default()
+                },
             };
             let transformed_metadata_value =
                 Encode::<api_models::payments::Metadata>::encode_to_value(&transformed_metadata)

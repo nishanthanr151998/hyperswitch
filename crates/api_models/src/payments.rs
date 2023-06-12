@@ -184,7 +184,8 @@ pub struct PaymentsRequest {
     pub statement_descriptor_suffix: Option<String>,
 
     /// You can specify up to 50 keys, with key names up to 40 characters long and values up to 500 characters long. Metadata is useful for storing additional, structured information on an object.
-    pub metadata: Option<Metadata>,
+    #[serde(flatten)]
+    pub metadata_internal: Option<Metadata>,
 
     /// Any other udf that is to be provided
     #[schema(value_type = Object, example = r#"{ "city": "NY", "unit": "245" }"#)]
@@ -253,6 +254,9 @@ pub struct PaymentsRequest {
     /// If enabled payment can be retried from the client side until the payment is successful or payment expires or the attempts(configured by the merchant) for payment are exhausted.
     #[serde(default)]
     pub manual_retry: bool,
+
+    /// metadata that will be deprecated. For now only order details can be passed here.
+    pub metadata: Option<MetadataExternal>,
 }
 
 #[derive(Default, Debug, serde::Deserialize, serde::Serialize, Clone, Copy, PartialEq, Eq)]
@@ -1618,11 +1622,8 @@ pub struct OrderDetails {
 #[derive(Default, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize, Clone, ToSchema)]
 pub struct Metadata {
     /// Information about the product and quantity for specific connectors. (e.g. Klarna)
+    #[serde(skip_deserializing)]
     pub order_details: Option<OrderDetails>,
-    /// Any other metadata that is to be provided
-    #[schema(value_type = Object, example = r#"{ "city": "NY", "unit": "245" }"#)]
-    #[serde(flatten)]
-    pub data: pii::SecretSerdeValue,
     /// Information about the order category that merchant wants to specify at connector level. (e.g. In Noon Payments it can take values like "pay", "food", or any other custom string set by the merchant in Noon's Dashboard)
     pub order_category: Option<String>,
     /// Redirection response coming in request as metadata field only for redirection scenarios
@@ -1639,6 +1640,21 @@ pub struct RedirectResponse {
     pub param: Option<Secret<String>>,
     #[schema(value_type = Option<Object>)]
     pub json_payload: Option<pii::SecretSerdeValue>,
+}
+
+#[derive(
+    Default,
+    Debug,
+    serde::Deserialize,
+    serde::Serialize,
+    Clone,
+    ToSchema,
+    router_derive::PolymorphicSchema,
+)]
+// This would be deprecated in the future
+pub struct MetadataExternal {
+    /// Information about the product and quantity for specific connectors. (e.g. Klarna)
+    pub order_details: Option<OrderDetails>,    
 }
 
 #[derive(Debug, serde::Deserialize, serde::Serialize, Clone, ToSchema)]

@@ -202,7 +202,7 @@ impl TryFrom<StripeSetupIntentRequest> for payments::PaymentsRequest {
                 .map(|b| payments::Address::from(b.to_owned())),
             statement_descriptor_name: item.statement_descriptor,
             statement_descriptor_suffix: item.statement_descriptor_suffix,
-            metadata: item.metadata,
+            metadata_internal: item.metadata,
             client_secret: item.client_secret.map(|s| s.peek().clone()),
             setup_future_usage: item.setup_future_usage,
             merchant_connector_details: item.merchant_connector_details,

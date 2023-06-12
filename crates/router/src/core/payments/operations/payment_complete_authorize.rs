@@ -158,7 +158,7 @@ impl<F: Send + Clone> GetTracker<F, PaymentData<F>, api::PaymentsRequest> for Co
             .to_not_found_response(errors::ApiErrorResponse::PaymentNotFound)?;
 
         let redirect_response = request
-            .metadata
+            .metadata_internal
             .as_ref()
             .and_then(|secret_metadata| secret_metadata.redirect_response.to_owned());
 

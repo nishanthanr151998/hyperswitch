@@ -219,7 +219,7 @@ impl TryFrom<StripePaymentIntentRequest> for payments::PaymentsRequest {
                 .and_then(|pmd| pmd.billing_details.map(payments::Address::from)),
             statement_descriptor_name: item.statement_descriptor,
             statement_descriptor_suffix: item.statement_descriptor_suffix,
-            metadata: item.metadata,
+            metadata_internal: item.metadata,
             client_secret: item.client_secret.map(|s| s.peek().clone()),
             authentication_type,
             mandate_data: mandate_options,
