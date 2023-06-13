@@ -542,28 +542,26 @@ impl PaymentCreate {
         active_attempt_id: String,
     ) -> RouterResult<storage::PaymentIntentNew> {
         let created_at @ modified_at @ last_synced = Some(common_utils::date_time::now());
+
         let status =
             helpers::payment_intent_status_fsm(&request.payment_method_data, request.confirm);
+
         let client_secret =
             crate::utils::generate_id(consts::ID_LENGTH, format!("{payment_id}_secret").as_str());
+
         let (amount, currency) = (money.0, Some(money.1));
+
         let metadata = request
-            .metadata_internal
+            .metadata
             .as_ref()
-            .map(|metadata| {
-                let transformed_metadata = api_models::payments::Metadata {
-                    allowed_payment_method_types: request.allowed_payment_method_types.clone(),
-                    ..metadata.clone()
-                };
-                Encode::<api_models::payments::Metadata>::encode_to_value(&transformed_metadata)
-            })
+            .map(Encode::<api_models::payments::Metadata>::encode_to_value)
             .transpose()
             .change_context(errors::ApiErrorResponse::InternalServerError)
             .attach_printable("Encoding Metadata to value failed")?;
-        let order_details_metadata_req = request
-            .clone()
-            .metadata_internal
-            .and_then(|meta| meta.order_details);
+
+        let order_details_metadata_req =
+            request.clone().metadata.and_then(|meta| meta.order_details);
+
         if request
             .clone()
             .order_details

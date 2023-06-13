@@ -244,10 +244,6 @@ pub struct PaymentsRequest {
     #[schema(value_type = Option<MerchantConnectorDetailsWrap>)]
     pub merchant_connector_details: Option<admin::MerchantConnectorDetailsWrap>,
 
-    /// Allowed Payment Method Types for a given PaymentIntent
-    #[schema(value_type = Option<Vec<PaymentMethodType>>)]
-    pub allowed_payment_method_types: Option<Vec<api_enums::PaymentMethodType>>,
-
     /// Business sub label for the payment
     pub business_sub_label: Option<String>,
 
@@ -1652,6 +1648,7 @@ pub struct RedirectResponse {
     router_derive::PolymorphicSchema,
 )]
 // This would be deprecated in the future
+#[serde(deny_unknown_fields)]
 pub struct MetadataExternal {
     /// Information about the product and quantity for specific connectors. (e.g. Klarna)
     pub order_details: Option<OrderDetails>,

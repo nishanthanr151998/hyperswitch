@@ -2173,7 +2173,7 @@ pub fn validate_and_add_order_details_to_payment_intent(
     let order_details_outside_metadata_req = request.clone().order_details;
     let order_details_metadata_req = request
         .clone()
-        .metadata_internal
+        .metadata
         .and_then(|meta| meta.order_details);
 
     if order_details_metadata_db
