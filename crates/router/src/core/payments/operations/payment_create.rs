@@ -413,7 +413,7 @@ impl<F: Send + Clone> ValidateRequest<F, api::PaymentsRequest> for PaymentCreate
     )> {
         let order_details_inside_metadata = request
             .clone()
-            .metadata_internal
+            .metadata
             .and_then(|meta| meta.order_details);
         if request
             .order_details
