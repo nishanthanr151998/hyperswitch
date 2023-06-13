@@ -14,6 +14,89 @@ use crate::{
     admin, disputes, enums as api_enums, ephemeral_key::EphemeralKeyCreateResponse, refunds,
 };
 
+//Types for Payment filter
+
+#[derive(Debug, serde::Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct GetPaymentFiltersRequest {
+    pub time_range: TimeRange,
+    #[serde(default)]
+    pub group_by_names: Vec<PaymentDimensions>,
+}
+
+// #[derive(Debug, Default, serde::Serialize)]
+// #[serde(rename_all = "camelCase")]
+// pub struct PaymentFiltersResponse {
+//     pub query_data: Vec<FilterValue>,
+// }
+
+// #[derive(Debug, serde::Serialize)]
+// #[serde(rename_all = "camelCase")]
+// pub struct FilterValue {
+//     pub dimension: PaymentDimensions,
+//     pub values: Vec<String>,
+// }
+
+
+#[derive(Debug, Clone, Copy, serde::Serialize, serde::Deserialize, PartialEq, Eq, Hash)]
+#[serde(rename_all = "camelCase")]
+pub struct TimeRange {
+    #[serde(with = "common_utils::custom_serde::iso8601")]
+    pub start_time: PrimitiveDateTime,
+    #[serde(default, with = "common_utils::custom_serde::iso8601::option")]
+    pub end_time: Option<PrimitiveDateTime>,
+}
+
+
+// #[derive(Clone, Debug, Default, serde::Deserialize)]
+// pub struct PaymentFilters {
+//     #[serde(default)]
+//     pub currency: Vec<Currency>,
+//     #[serde(default)]
+//     pub status: Vec<AttemptStatus>,
+//     #[serde(default)]
+//     pub connector: Vec<Connector>,
+//     #[serde(default)]
+//     pub auth_type: Vec<AuthenticationType>,
+//     #[serde(default)]
+//     pub payment_method: Vec<PaymentMethod>,
+// }
+
+#[derive(
+    Debug,
+    serde::Serialize,
+    serde::Deserialize,
+    strum::AsRefStr,
+    PartialEq,
+    PartialOrd,
+    Eq,
+    Ord,
+    strum::Display,
+    strum::EnumIter,
+    Clone,
+    Copy,
+)]
+#[serde(rename_all = "snake_case")]
+#[strum(serialize_all = "snake_case")]
+pub enum PaymentDimensions {
+    // Do not change the order of these enums
+    // Consult the Dashboard FE folks since these also affects the order of metrics on FE
+    Connector,
+    PaymentMethod,
+    Currency,
+    #[strum(serialize = "status")]
+    #[serde(rename = "status")]
+    PaymentStatus,
+}
+
+
+
+
+//Types for payments filter end
+
+
+
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum PaymentOp {
     Create,
