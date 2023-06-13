@@ -41,8 +41,8 @@ pub async fn payments_create(
 ) -> impl Responder {
     let flow = Flow::PaymentsCreate;
     let payload = json_payload.into_inner();
-    
-    println!("kohli {:#?}" , payload);
+
+    println!("kohli {:#?}", payload);
     if let Some(api_enums::CaptureMethod::Scheduled) = payload.capture_method {
         return http_not_implemented();
     };

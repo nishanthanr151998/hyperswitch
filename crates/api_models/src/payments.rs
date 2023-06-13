@@ -1654,7 +1654,7 @@ pub struct RedirectResponse {
 // This would be deprecated in the future
 pub struct MetadataExternal {
     /// Information about the product and quantity for specific connectors. (e.g. Klarna)
-    pub order_details: Option<OrderDetails>,    
+    pub order_details: Option<OrderDetails>,
 }
 
 #[derive(Debug, serde::Deserialize, serde::Serialize, Clone, ToSchema)]
